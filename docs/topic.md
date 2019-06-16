@@ -5,9 +5,7 @@
 - [启动ngnix本地服务器]()
 
 ## Nuxt
-- [ssr项目优化①](https://github.com/mabel-xue/workdaily/blob/develop/docs/6-10.md#ssr%E5%BA%94%E7%94%A8%E4%BC%98%E5%8C%96--nuxt)
-- [ssr项目优化②]()
-- [ssr项目优化③]()
+- [Nuxt-SSR应用优化]()
 
 ## Vue
 - [移动端开发问题-跨页面锚点不定位](https://github.com/mabel-xue/workdaily/blob/develop/docs/6-10.md#vue-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%B7%A8%E9%A1%B5%E9%9D%A2%E9%94%9A%E7%82%B9%E4%B8%8D%E5%AE%9A%E4%BD%8D--vue--nuxt)
