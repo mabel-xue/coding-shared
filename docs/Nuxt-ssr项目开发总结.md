@@ -1,3 +1,5 @@
+# Nuxt-ssr项目开发经验
+
 ## 项目背景
 
 该项目是公司针对SEO制定的新版官网开发需求，通过服务端渲染(SSR)实现，技术栈为Nuxt(基于Vue)，UI框架为Bulma，部署方式为静态部署。
@@ -6,8 +8,8 @@
 
 ### image lazy-loading
 
-关于图片懒加载，可以使用原生属性loading="lazy"，详情可以通过阅读此文了解
-💬[博文参考](https://addyosmani.com/blog/lazy-loading/)；如果对图片懒加载有其他需求，比如设置默认
+关于图片懒加载，可以使用原生属性loading="lazy"，详情可以通过阅读此文了解💬[博文参考](https://addyosmani.com/blog/lazy-loading/)；如果对图片懒加载有其他需求，比如设置默认图片，或者添加图片加载失败或成功的回调
+，可引入插件实现。
 
 ### 插件的按需加载
 
@@ -37,7 +39,7 @@
 
 axe是一个在开发阶段可以扫描页面并给出Accessibility优化建议的工具，使用方便，比Lighthouse列出的可优化项更详细。
 
-[官网](https://www.deque.com/axe/)
+💬[官网](https://www.deque.com/axe/)
 
 ### meta信息
 
@@ -89,7 +91,7 @@ meta: [{
     }],
     ```
 
-以及分享时相关配图的设置：
+并添加了分享时相关配图的设置：
 
 ```js
 link: [{
@@ -103,7 +105,7 @@ link: [{
 }]
 ```
 
-另外，在各个页面，都应该分别设置不同的meta-title及description信息，对此Nuxt有良好支持。
+另外，在各个页面，都应个性化的meta-title及description信息，对此Nuxt有良好支持：💬[Nuxt官网-head()方法](https://zh.nuxtjs.org/api/pages-head)。
 
 ## 注意事项/问题/坑 & 解决
 
@@ -143,7 +145,7 @@ mounted() {
 }
 ```
 
-- 方法② NuxtLink不支持带hash的跳转，要改成a链接
+- 方法② 静态部署后NuxtLink不支持带hash的跳转，可以改成a链接
 
 ### 关于Nuxt异步数据请求在客户端运行的问题
 
