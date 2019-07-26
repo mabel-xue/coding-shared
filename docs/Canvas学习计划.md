@@ -1,6 +1,6 @@
 # Canvas学习计划
 
-## 学习资料
+## 学习资源
 
 - 💻 [MDN web docs-Canvas](https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API)
 - 📖 HTML5 Canvas 开发详解（第2版）
