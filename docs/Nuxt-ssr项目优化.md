@@ -14,7 +14,7 @@ head: {
 }
 ```
 
-- 用 ```NuxtLink``` 替代 ```a```
+<!-- - 用 ```NuxtLink``` 替代 ```a```，有hash值除外 -->
 - 添加img-alt属性
 - 图片懒加载
   
@@ -37,3 +37,11 @@ head: {
 添加一层分页路由```/news/list/:id```，页码能直接跳转到对应路由，这样做的好处是让SEO更加友好
 
 💬[代码详情](https://gitlab.bigtree.com/fe/official/bigtreefinance-www/commit/bfee875c52258595b667fcf3c22ad7784a100928)
+
+- 不用过渡依赖css框架
+
+在自适应过程中，注意图像的原比例显示，尤其是作为背景图时，框架的自适应并不能良好展现图片。因此需要利用media对不同尺寸进行调试。
+
+- ie、火狐兼容性问题的自测
+
+如：ie对css的支持问题 和 火狐的安全策略问题
