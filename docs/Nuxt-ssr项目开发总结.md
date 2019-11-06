@@ -119,6 +119,34 @@ link: [{
 
 💬[参考-mac 查看、修改文件权限的命令](https://www.jianshu.com/p/d5f9672f94ef)
 
+### 在Nuxt中进行amap插件的按需加载
+
+在新官网项目中，amap初始按全局添加到plugins中，发现在首屏加载时会加载amap，但实际只有兄弟路由才会用到。
+
+- 解决
+
+删除全局引用；在局部.vue中添加：
+
+```js
+created() {
+  // $isServer：判断当前环境是否为服务端
+  // 因为在服务端时，运行amap中代码会报错，原因是node中没有DOM相关变量，如document，所以在此判断，当为客户端时才运行这段代码，加载amap
+  if (!this.$isServer) {
+    let VAMap = { loadScript }
+    VAMap.loadScript({
+      // 高德的key
+      key: '17e69c751701a8d60e9003e6940c848b',
+      // 高德 sdk 版本，默认为 1.4.4
+      version: '1.4.4'
+    })
+  }
+},
+```
+
+💬[$isServer官网参考](https://zh.nuxtjs.org/api/configuration-build/#extend)
+
+💬[代码详情](https://gitlab.bigtree.com/fe/official/bigtreefinance-www/commit/bfee875c52258595b667fcf3c22ad7784a100928)
+
 ### background-image切换时出现闪动
 
 改用精灵图，通过background-position定位切换图片
@@ -149,16 +177,21 @@ mounted() {
 
 ### 关于Nuxt异步数据请求在客户端运行的问题
 
-背景：官网项目的新闻数据是通过异步获取，在开发前期我把各个请求写在了对应页面的asyncData方法中，在静态部署后未发现异常。但当新闻后台新增数据后，如果请求的最新数据和部署时数据不一致，会导致在初次访问页面或内部路由跳转时请求到新数据，但在刷新页面后，页面显示的数据为部署时的静态数据，导致数据丢失。
+#### 背景
+
+官网项目的新闻数据是通过异步获取，在开发前期我把各个请求写在了对应页面的asyncData方法中，在静态部署后未发现异常。但当新闻后台新增数据后，如果请求的最新数据和部署时数据不一致，会导致在初次访问页面或内部路由跳转时请求到新数据，但在刷新页面后，页面显示的数据为部署时的静态数据，导致数据丢失。
 
 #### 原因
 
 asyncData方法会在页面渲染组件之前异步获取数据，它可以在服务端或路由更新之前被调用，所以页面刷新时不会执行该方法，而且通过获取服务端数据，所以会出现数据丢失的现象；
 
+- 在执行nuxt generate时，会执行asyncData里的方法来静态化所有的html文件，这些数据是被generate的时候生成一个script在html里的来执行的；
+
 #### 解决
 
 ① 在store目录下新建index.js，在```nuxtServerInit```方法中获取新闻数据并存储在store中：
-* nuxtServerInit方法会在将我们从服务器获取到的数据填充到状态树 (store) 上。
+
+- nuxtServerInit方法会在将我们从服务器获取到的数据填充到状态树 (store) 上。
 
 ```js
 import NewsService from '~/assets/news-service'
@@ -203,7 +236,11 @@ async asyncData({ store }) {
 ...
 ```
 
-通过以上解决方法，再次进入客户端时不会在前端请求数据，后台更新数据后不影响现有页面展示，当再次generate并部署后会获得最新数据。如果想要即时获得最新数据，可以将内部路由Nuxt-Link跳转改为a链接跳转，由于官网项目为SPA模式，故没有考虑该解决方式。
+通过以上解决方法，再次进入客户端时不会在前端请求数据，后台更新数据后不影响现有页面展示，当再次 ```nuxt generate``` 并部署后会获得最新数据。如果想要即时获得最新数据，可以将内部路由 Nuxt-Link 跳转改为 a链接 跳转，由于官网项目为SPA模式，故没有考虑该解决方式。
+
+💬[nuxt-asyncData](https://www.gd277217.com/nuxt/asyncData/asyncData.html)
+
+💬[vuex-store-nuxtserverinit](https://zh.nuxtjs.org/guide/vuex-store/#nuxtserverinit-%E6%96%B9%E6%B3%95)
 
 ### 运行generate时部分页面生成失败
 
