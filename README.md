@@ -2,14 +2,7 @@
 
 记录每天工作收获&心得；
 
-## 目录结构
-
-```md
-# What’s New
-# What's Solution
-# What’s Improvement
-# What's More
-```
+New/Solution/Improvement/More
 
 ## TODO-List
 

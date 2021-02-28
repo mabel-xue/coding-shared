@@ -1,0 +1,29 @@
+<head>
+  <script src="../node_modules/animejs/lib/anime.min.js"></script>
+</head>
+<body>
+  数字
+
+  <div class="demo-content">
+    <pre class="battery-log">{"charged":"0%","cycles":120}</pre>
+  </div>
+  <script>
+    var logEl = document.querySelector('.battery-log');
+
+    var battery = {
+      charged: '0%',
+      cycles: 120
+    }
+
+    anime({
+      targets: battery,
+      charged: '100%',
+      cycles: 130,
+      round: 1,
+      easing: 'linear',
+      update: function() {
+        logEl.innerHTML = JSON.stringify(battery);
+      }
+    });
+  </script>
+</body>

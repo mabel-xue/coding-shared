@@ -19,9 +19,11 @@
 
 ### 网站性能测评工具-Lighthouse(chorme插件)
 
+
+
 ```Lighthouse```是一个Google开源的自动化工具，主要用于改进网络应用（移动端）的质量。目前测试项包括```页面性能```、```PWA```、```可访问性（无障碍）```、```最佳实践```、```SEO```。Lighthouse会对各个测试项的结果打分，并给出优化建议，这些打分标准和优化建议可以视为Google的网页最佳实践。
 
-**常用最佳实践**
+#### 常用最佳实践
 
 - 打开外部链接使用rel="noopener"
 - 避免长宽比不正确的图像
@@ -32,6 +34,22 @@
 - 避免DOM过大
 - 页面应该给元素适当的角色role="navigation" role="main" role="contentinfo"等
 - ...
+
+#### Performance
+
+Serve static assets with an efficient cache policy 
+给静态资源添加缓存
+
+```js
+render: {
+  // Setting up cache for 'static' directory - a year in milliseconds
+  // https://web.dev/uses-long-cache-ttl
+  static: {
+    maxAge: 60 * 60 * 24 * 365 * 1000,
+  },
+},
+```
+
 
 💬[官方-Lighthouse Scoring Guide](https://developers.google.com/web/tools/lighthouse/v3/scoring#perf-consistency)
 
@@ -155,6 +173,9 @@ created() {
 
 **🤔 原因**
 
+**场景**
+从 page/1 跳到 page/2#a 时，页面没有定位到锚点处
+
 **解决**
 
 - 方法① 在有hash的页面添加代码：
@@ -162,8 +183,12 @@ created() {
 ```js
 methods: {
   goAnchor(selector) {
-    let anchor = this.$el.querySelector(selector)
-    anchor.scrollIntoView()
+    // 最好加个定时器给页面缓冲时间
+  	setTimeout(() => {
+  		// 获取锚点元素
+    	let anchor = this.$el.querySelector(selector)
+    	anchor.scrollIntoView()
+    }, 500)
   }
 },
 mounted() {
@@ -174,6 +199,9 @@ mounted() {
 ```
 
 - 方法② 静态部署后NuxtLink不支持带hash的跳转，可以改成a链接
+
+**相关**
+ [Element.scrollIntoView()语法说明](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
 
 ### 关于Nuxt异步数据请求在客户端运行的问题
 
@@ -294,3 +322,143 @@ location = /404/index.html {
 
 💬[参考 - Nginx实现404页面的三种方法](https://blog.csdn.net/bbwangj/article/details/82806689)
 
+### 线上环境首页渲染失败
+
+场景：在变更通知需求中，【首次进入弹窗】组件`NoteDialog`在线上环境报错:
+
+`Error while initializing app DOMException: Failed to execute ‘appendChild’ on ‘Node’: This node type does not support this method.`
+
+原因：
+
+解决：
+
+在组件外层加`no-ssr`:
+
+```js
+<no-ssr><NoteDialog :active="noteShow" @close="closeDialog" /></no-ssr>
+```
+
+💬[解决参考](https://www.jianshu.com/p/b353a5d3104a)
+
+💬[nuxt - <no-ssr>](https://nuxtjs.org/api/components-client-only/)
+
+💬[未知解决](https://blog.pureday.life/archives/1353)
+
+## 待用功能记录
+
+### nuxt-mq 当您进入JavaScript代码时，是否需要知道哪些断点处于活动状态？该软件包将使您快速完成该任务
+
+安装：npm install nuxt-mq
+
+```js
+// nuxt.config.js
+
+module.exports = {
+  modules: [["nuxt-mq"]],
+
+  mq: {
+    defaultBreakpoint: "desktop",
+    breakpoints: {
+      mobile: 768,
+      tablet: 1024,
+      desktop: 1400,
+      desktopWide: 2000,
+      desktopUltraWide: Infinity
+    }
+  }
+};
+
+```
+
+```html
+<base-button :size="$mq === 'mobile' ? 'small' : 'default">My Button Label</base-button>
+```
+
+### npm install @nuxtjs/sentry 
+
+对于所有想要修复和构建可靠的Web应用程序的开发人员来说，Sentry都是必备工具。它将保存并通知您有关生产环境中触发的所有异常的信息。幸运的是，有了这个模块，您可以在不到一分钟的时间内完成设置。在Sentry上创建一个帐户，然后添加您的DSN。
+
+```js
+// nuxt.config.js
+
+module.exports = {
+  modules: ["@nuxtjs/sentry"],
+
+  sentry: {
+    dsn: "https://4b175105498572343508bc3ac8923e72@sentry.io/3847292", // Enter your project's DSN here
+    config: {} // Additional config
+  }
+};
+```
+
+### npm install @nuxtjs/toast
+
+toast可以说是很常用的功能，一般的UI框架都会有这个功能。但如果你的站点没有使用UI框架，而alert又太丑，不妨引入该模块
+
+```js
+module.exports = {
+    modules: [
+    '@nuxtjs/toast',
+    ['@nuxtjs/dotenv', { filename: '.env.prod' }] // 指定打包时使用的dotenv
+  ],
+  toast: {// toast模块的配置
+    position: 'top-center', 
+    duration: 2000,
+    register: [
+      // Register custom toasts
+      {
+        name: "my-error",
+        message: "Oops...Something went wrong",
+        options: {
+          type: "error"
+        }
+      }
+    ]
+  }
+}
+```
+
+```js
+this.$toast.error('服务器开小差啦~~')
+this.$toast.error('请求成功~~')
+```
+
+### npm install nuxt-imagemin
+
+基于流行的imagemin库，无缝缩小所有PNG，JPEG，GIF和SVG图像，以使Web应用程序加载更快。为每个配置优化级别。
+
+```js
+// nuxt.config.js
+
+module.exports = {
+  modules: [
+    [
+      "nuxt-imagemin",
+      {
+        optipng: { optimizationLevel: 5 },
+        gifsicle: { optimizationLevel: 2 }
+      }
+    ]
+  ];
+};
+```
+
+### npm install @nuxtjs/router
+
+厌倦了使用pages目录来定义路由？您仍然可以router.js像在其他任何Vue应用程序上一样，将自己的文件与此模块一起使用。
+
+```js
+// nuxt.config.js
+
+module.exports = {
+  modules: ["@nuxtjs/router"],
+
+  routerModule: {
+    path: "srcDir",
+    fileName: "router.js",
+    keepDefaultRouter: false
+  }
+};
+```
+
+[20 Nuxt Modules (with Tips) to Increase Your Productivity and Build Web Apps Faster](https://www.telerik.com/blogs/20-nuxt-modules-with-tips-to-increase-productivity-build-web-apps-faster)
